@@ -27,11 +27,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        onClickbtn();
+        GetAllRegions();
     }
-    public void onClickbtn() {
+    public void GetAllRegions() {
 
-        ListView listView = (ListView)findViewById(R.id.users_list);
+//        ListView listView = (ListView)findViewById(R.id.users_list);
         String url = "http://192.168.1.243:80/android/regions.php";
         //check if there is a permission or not . if there is no permission send permission request
         if (ContextCompat.checkSelfPermission(this,
@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.INTERNET},
                     123);
 
-        } else{
+        }
+        else{
             DownloadTextTask runner = new DownloadTextTask();
             runner.execute(url);
         }
@@ -130,24 +131,31 @@ public class MainActivity extends AppCompatActivity {
             //for(String s : books){
             //    str+= s + "\n";
             // }
-            ListView listView = (ListView)findViewById(R.id.users_list);
-            String[] values = result.split("-");
-            String [] data=new String[values.length];
+//            ListView listView = (ListView)findViewById(R.id.users_list);
+            String[] values = result.split(";");
+//            String [] data=new String[values.length];
             String []name=new String[values.length];
+            String []lang=new String[values.length];
+            String []lat=new String[values.length];
+            String []pop=new String[values.length];
             int []image_id=new int[values.length];
             for(int i=0;i<values.length;i++){
                 String [] newData=values[i].split(",");
                 for(int j=0;j<=0;j++){
                     name[i]=newData[j+1];
                     int resourceId = MainActivity.this.getResources().getIdentifier(newData[j+2], "drawable", MainActivity.this.getPackageName());
+                    image_id[i]=resourceId;
+                    lang[i]=newData[j+3];
+                    lat[i]=newData[j+4];
+                    pop[i]=newData[j+5];
+                }
 
-                    image_id[i]=resourceId;}
 
             }
-            RecyclerView recycler = (RecyclerView)findViewById(R.id.movie_recycler);
+            RecyclerView recycler = (RecyclerView)findViewById(R.id.regions_recycler);
 
             recycler.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-            CaptionedImageAdapter adapter = new CaptionedImageAdapter(name, image_id);
+            CaptionedImageAdapter adapter = new CaptionedImageAdapter(name, image_id,lang,lat,pop);
             recycler.setAdapter(adapter);
 
 //            ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(MainActivity.this,
@@ -157,7 +165,5 @@ public class MainActivity extends AppCompatActivity {
 
 //            edtData.setText(result);
         }
-
-
     }
 }
